@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'configs/configs.dart';
+
 class FacialAuthenticationApp extends StatelessWidget {
   const FacialAuthenticationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Facial Authentication',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const Scaffold(
-        body: Center(
-          child: Text('FACIAL AUTHENTICATION APP'),
-        ),
-      ),
+      routerConfig: AppRouter.router,
     );
   }
 }
