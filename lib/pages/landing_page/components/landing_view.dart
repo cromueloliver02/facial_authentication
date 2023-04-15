@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../pages.dart';
 import 'landing_app_bar.dart';
 
 class LandingView extends StatelessWidget {
@@ -7,13 +9,28 @@ class LandingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: PreferredSize(
+    return Scaffold(
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: LandingAppBar(),
       ),
       body: Center(
-        child: Text('LANDING PAGE'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () => context.goNamed(SignInPage.name),
+              icon: const Icon(Icons.login),
+              label: const Text('Sign In'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () => context.goNamed(SignUpPage.name),
+              icon: const Icon(Icons.face),
+              label: const Text('Sign Up'),
+            ),
+          ],
+        ),
       ),
     );
   }

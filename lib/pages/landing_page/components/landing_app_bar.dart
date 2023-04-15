@@ -7,7 +7,7 @@ class LandingAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: const Text('Landing Page'),
+      title: const Text('Face Authentication'),
     );
   }
 }
