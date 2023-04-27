@@ -22,7 +22,9 @@ class _CameraState extends State<Camera> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
-    if (!_cameraController.value.isInitialized) return const SizedBox.shrink();
+    if (!_cameraController.value.isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return SizedBox(
       height: screenSize.height,
