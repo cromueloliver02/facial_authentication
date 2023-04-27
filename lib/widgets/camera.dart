@@ -14,6 +14,9 @@ class Camera extends StatefulWidget {
 class _CameraState extends State<Camera> {
   late final CameraController _cameraController;
   late final TextEditingController _nameController;
+  bool _processImage = false;
+
+  void _onCaptureFrame() => _processImage = true;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,7 @@ class _CameraState extends State<Camera> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: _onCaptureFrame,
                       icon: const Icon(Icons.camera),
                       label: const Text('Capture'),
                     ),
@@ -96,6 +99,13 @@ class _CameraState extends State<Camera> {
       if (!mounted) return;
 
       setState(() {});
+
+      await _cameraController.startImageStream((CameraImage image) async {
+        if (!_processImage) return;
+
+        // start processing image here
+        _processImage = false;
+      });
     } catch (err) {
       if (err is CameraException) {
         switch (err.code) {
@@ -112,6 +122,7 @@ class _CameraState extends State<Camera> {
 
   @override
   void dispose() {
+    _cameraController.stopImageStream();
     _cameraController.dispose();
     _nameController.dispose();
     super.dispose();
