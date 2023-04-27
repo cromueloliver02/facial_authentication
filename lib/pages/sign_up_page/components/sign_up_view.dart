@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 
-import 'camera.dart';
+import '../../../widgets/widgets.dart';
 import 'sign_up_app_bar.dart';
 
 class SignUpView extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../widgets/widgets.dart';
 import 'sign_in_app_bar.dart';
 
 class SignInView extends StatelessWidget {
@@ -12,9 +13,7 @@ class SignInView extends StatelessWidget {
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: SignInAppBar(),
       ),
-      body: Center(
-        child: Text('SIGN IN PAGE'),
-      ),
+      body: Camera(),
     );
   }
 }
