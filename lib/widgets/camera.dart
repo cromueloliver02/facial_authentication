@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:lottie/lottie.dart';
 
 import '../configs/configs.dart';
+import '../utils/utils.dart';
 
 class Camera extends StatefulWidget {
   const Camera({super.key});
@@ -12,11 +14,22 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
+  late final FaceDetector _faceDetector;
   late final CameraController _cameraController;
   late final TextEditingController _nameController;
   bool _processImage = false;
 
   void _onCaptureFrame() => _processImage = true;
+
+  void _detectFaces(CameraImage image) async {
+    final InputImage inputImage = convertCameraImageToInputImage(
+      camera: sl<CameraDescription>(),
+      image: image,
+    );
+    final List<Face> faces = await _faceDetector.processImage(inputImage);
+
+    print('faces $faces');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +98,10 @@ class _CameraState extends State<Camera> {
   @override
   void initState() {
     super.initState();
+    final FaceDetectorOptions options =
+        FaceDetectorOptions(performanceMode: FaceDetectorMode.accurate);
+
+    _faceDetector = FaceDetector(options: options);
     _nameController = TextEditingController();
     _cameraController = CameraController(
       sl<CameraDescription>(),
@@ -105,7 +122,7 @@ class _CameraState extends State<Camera> {
       await _cameraController.startImageStream((CameraImage image) async {
         if (!_processImage) return;
 
-        // start processing image here
+        _detectFaces(image);
         _processImage = false;
       });
     } catch (err) {

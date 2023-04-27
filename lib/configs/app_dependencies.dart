@@ -8,6 +8,6 @@ void setup() {
   sl.registerSingletonAsync<CameraDescription>(() async {
     final List<CameraDescription> cameras = await availableCameras();
 
-    return cameras.first;
+    return cameras[1];
   });
 }
