@@ -1,7 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
-import '../configs/app_dependencies.dart';
+import '../configs/configs.dart';
 
 class Camera extends StatefulWidget {
   const Camera({super.key});
@@ -30,6 +31,16 @@ class _CameraState extends State<Camera> {
             child: SizedBox(
               height: screenSize.height,
               child: CameraPreview(_cameraController),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              child: Lottie.network(
+                kFaceScanAnimationUrl,
+                width: 300,
+                height: 300,
+              ),
             ),
           ),
           Align(

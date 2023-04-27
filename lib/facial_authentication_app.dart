@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'configs/app_dependencies.dart';
 import 'configs/configs.dart';
 
 class FacialAuthenticationApp extends StatelessWidget {
