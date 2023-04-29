@@ -1,10 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:lottie/lottie.dart';
 
 import '../configs/configs.dart';
 import '../utils/utils.dart';
+import 'face_boxes_overlay.dart';
+import 'face_placeholder.dart';
+import 'sign_up_form.dart';
 
 class Camera extends StatefulWidget {
   const Camera({super.key});
@@ -16,19 +18,24 @@ class Camera extends StatefulWidget {
 class _CameraState extends State<Camera> {
   late final FaceDetector _faceDetector;
   late final CameraController _cameraController;
-  late final TextEditingController _nameController;
-  bool _processImage = false;
+  List<Face> _faces = [];
+  bool _processing = false;
 
-  void _onCaptureFrame() => _processImage = true;
+  void _onCapture() {}
 
   void _detectFaces(CameraImage image) async {
+    _processing = true;
+
     final InputImage inputImage = convertCameraImageToInputImage(
       camera: sl<CameraDescription>(),
       image: image,
     );
     final List<Face> faces = await _faceDetector.processImage(inputImage);
 
-    print('faces $faces');
+    setState(() {
+      _faces = faces;
+      _processing = false;
+    });
   }
 
   @override
@@ -48,47 +55,33 @@ class _CameraState extends State<Camera> {
             alignment: Alignment.center,
             child: SizedBox(
               height: screenSize.height,
+              // width: screenSize.width,
               child: CameraPreview(_cameraController),
+            ),
+          ),
+          Visibility(
+            visible: _faces.isEmpty,
+            child: const Align(
+              alignment: Alignment.center,
+              child: FacePlaceholder(),
             ),
           ),
           Align(
             alignment: Alignment.center,
             child: SizedBox(
-              child: Lottie.network(
-                kFaceScanAnimationUrl,
-                width: 300,
-                height: 300,
+              height: screenSize.height,
+              width: screenSize.width,
+              child: FaceBoxesOverlay(
+                faces: _faces,
+                isCameraInitialized: _cameraController.value.isInitialized,
+                height: _cameraController.value.previewSize!.height,
+                width: _cameraController.value.previewSize!.width,
               ),
             ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: const InputDecoration(
-                      hintText: 'Enter name',
-                      filled: true,
-                      fillColor: Colors.white54,
-                      hintStyle: TextStyle(color: Colors.black45),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _onCaptureFrame,
-                      icon: const Icon(Icons.camera),
-                      label: const Text('Capture'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: SignUpForm(onCapture: _onCapture),
           ),
         ],
       ),
@@ -102,7 +95,6 @@ class _CameraState extends State<Camera> {
         FaceDetectorOptions(performanceMode: FaceDetectorMode.accurate);
 
     _faceDetector = FaceDetector(options: options);
-    _nameController = TextEditingController();
     _cameraController = CameraController(
       sl<CameraDescription>(),
       ResolutionPreset.max,
@@ -119,11 +111,10 @@ class _CameraState extends State<Camera> {
 
       setState(() {});
 
-      await _cameraController.startImageStream((CameraImage image) async {
-        if (!_processImage) return;
+      await _cameraController.startImageStream((CameraImage image) {
+        if (_processing) return;
 
         _detectFaces(image);
-        _processImage = false;
       });
     } catch (err) {
       if (err is CameraException) {
@@ -143,7 +134,6 @@ class _CameraState extends State<Camera> {
   void dispose() {
     _cameraController.stopImageStream();
     _cameraController.dispose();
-    _nameController.dispose();
     super.dispose();
   }
 }
